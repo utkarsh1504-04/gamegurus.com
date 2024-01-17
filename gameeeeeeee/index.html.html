@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Dodging Game</title>
+    <style>
+
+    
+        body { 
+        background-image:url(sleeping_dogs_game___sunset-wallpaper-1920x1080\ \(1\).jpg);
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #c0e2f8;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #game-container {
+            display: grid;
+            grid-template-columns: repeat(30, 40px); /* Increased the size to 40px */
+            gap: 1px;
+            border: 1px solid #333;
+            background-color: #fff;
+        }
+
+        .cell {
+            width: 40px; /* Increased the size to 40px */
+            height: 90px; /* Increased the size to 40px */
+            border: 1px solid #eee;
+            box-sizing: border-box;
+            padding-top: 18px;
+        }
+
+        #score { 
+            background-color: aqua;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .car-icon {
+            font-size: 24px; /* Adjusted the size to 24px */
+        }
+            
+        button{
+            text-decoration: none;
+            color:white;
+            background-color:black;
+        }
+        .ahref{
+            text-decoration: none;
+            color:white;
+            background-color:transparent;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container"></div>
+<div id="score">Score:0</div>
+
+<script>
+    class Player {
+        constructor() {
+            this.x = 15;
+            this.y = 4;
+        }
+    }
+
+    class Lane {
+        constructor() {
+            this.cars = Array.from({ length: 30 }, () => Math.random() < 0.03); /* Further reduced the probability for fewer cars */
+        }
+
+        move() {
+            const randomIndex = Math.floor(Math.random() * 30);
+            this.cars.unshift(randomIndex < 10);
+            this.cars.pop();
+        }
+
+        checkPos(pos) {
+            return this.cars[pos];
+        }
+    }
+
+    class Game {
+        constructor() {
+            this.numberofLanes = 5;
+            this.width = 30;
+            this.score = -3;
+            this.quit = false;
+            this.player = new Player();
+            this.map = Array.from({ length: this.numberofLanes }, () => new Lane());
+        }
+
+        draw() {
+            const gameContainer = document.getElementById('game-container');
+            gameContainer.innerHTML = '';
+
+            for (let i = 0; i < this.numberofLanes; i++) {
+                for (let j = 0; j < this.width; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+
+                    if (i === 0 && (j === 0 || j === this.width - 1)) {
+                        cell.textContent = 'S';
+                    } else if (i === this.numberofLanes - 1 && (j === 0 || j === this.width - 1)) {
+                        cell.textContent = 'F';
+                    } else if (this.map[i].checkPos(j) && i !== 0 && i !== this.numberofLanes - 1) {
+                        // Use a car icon or image here
+                        cell.innerHTML = '<span class="car-icon">🚗</span>';
+                    } else if (this.player.x === j && this.player.y === i) {
+                        cell.innerHTML = '<span class="car-icon">🚶</span>';
+                    }
+
+                    gameContainer.appendChild(cell);
+                }
+            }
+
+            document.getElementById('score').textContent = `Score: ${this.score}`;
+        }
+
+        input(event) {
+            switch (event.key) {
+                case 'ArrowLeft':
+                    this.player.x = Math.max(0, this.player.x - 1);
+                    break;
+                case 'ArrowRight':
+                    this.player.x = Math.min(this.width - 1, this.player.x + 1);
+                    break;
+                case 'ArrowUp':
+                    this.player.y = Math.max(0, this.player.y - 1);
+                    break;
+                case 'ArrowDown':
+                    this.player.y = Math.min(this.numberofLanes - 1, this.player.y + 1);
+                    break;
+                case 'q':
+                    this.quit = true;
+                    break;
+            }
+        }
+
+        logic() {
+            for (let i = 1; i < this.numberofLanes - 1; i++) {
+                if (Math.random() < 0.05) { /* Reduced the probability for slower speed */
+                    this.map[i].move();
+                    if (this.map[i].checkPos(this.player.x) && this.player.y === i) {
+                        this.quit = true;
+                    }
+                }
+            }
+
+            if (this.player.y === this.numberofLanes - 1) {
+                this.score++;
+                this.score++;
+                this.score++;
+                
+                this.player.y = 0;
+                console.log('\x07'); // You can customize the alert sound in the console
+            }
+        }
+
+        run() {
+            document.addEventListener('keydown', (event) => this.input(event));
+
+            const gameLoop = () => {
+                if (!this.quit) {
+                    this.draw();
+                    this.logic();
+                    requestAnimationFrame(gameLoop);
+                } else {
+                    alert(`Game over! Your score: ${this.score}`);
+                }
+            };
+
+            gameLoop();
+        }
+    }
+
+    const game = new Game();
+    game.run();
+</script>
+<div class="refresh">
+    <button>
+<a href="index1.html" class="ahref">TRY AGAIN</a></button>
+</div>
+
+</body>
+</html>

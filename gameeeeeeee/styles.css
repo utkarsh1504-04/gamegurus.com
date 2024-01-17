@@ -1,0 +1,31 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Courier New', monospace;
+}
+
+#game-container {
+    text-align: center;
+    overflow: hidden;
+}
+
+.lane {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.player {
+    color: #00f;
+}
+
+.car {
+    color: #f00;
+}
+
+#start {
+    margin-top: 20px;
+}
+
